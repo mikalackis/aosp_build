@@ -33,7 +33,8 @@ PRODUCT_PACKAGES += CalculatorGoogle \
                     Hangouts \
                     Maps \
                     Photos \
-                    YouTube
+                    YouTube \
+                    Chrome
 
 ifneq ($(filter $(TARGET_GAPPS_VARIANT),full),) # require at least full
 PRODUCT_PACKAGES += Books \
