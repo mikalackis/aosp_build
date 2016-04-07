@@ -7,6 +7,7 @@ GAPPS_FILES := $(GAPPS_DEVICE_FILES_PATH)/opengapps-files.mk
 include $(GAPPS_BUILD_SYSTEM_PATH)/definitions.mk
 
 # Device should define their GAPPS_VARIANT in device/manufacturer/product/BoardConfig.mk
+ifneq ($(TARGET_PRODUCT),$(filter $(TARGET_PRODUCT),sdk))
 ifeq ($(GAPPS_VARIANT),)
 	$(error GAPPS_VARIANT must be configured)
 endif
@@ -17,3 +18,5 @@ $(error GAPPS_VARIANT $(GAPPS_VARIANT) was not found. Use of one of pico,nano,mi
 endif
 
 TARGET_GAPPS_VARIANT := $(GAPPS_VARIANT_EVAL)
+endif
+
