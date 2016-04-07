@@ -3,18 +3,36 @@ GAPPS_BUILD_SYSTEM_PATH := vendor/google/build/core
 GAPPS_SOURCES_PATH := vendor/opengapps/sources
 GAPPS_DEVICE_FILES_PATH := vendor/google/build
 GAPPS_FILES := $(GAPPS_DEVICE_FILES_PATH)/opengapps-files.mk
+GAPPS_CLEAR_VARS := $(GAPPS_BUILD_SYSTEM_PATH)/clear_vars.mk
+
+ifeq ($(GAPPS_FORCE_MATCHING_DPI),)
+  GAPPS_FORCE_MATCHING_DPI := false
+endif
+
+ifeq ($(GAPPS_FORCE_MATCHING_DPI),false)
+  GAPPS_AAPT_PATH := prebuilts/sdk/tools/$(HOST_OS)/bin/aapt$(HOST_EXECUTABLE_SUFFIX)
+  # Check if aapt is present in prebuilts or if it is installed.
+  ifeq ($(wildcard $(GAPPS_AAPT_PATH)),)
+    GAPPS_TEST_AAPT := $(shell command -v aapt)
+    ifeq ($(GAPPS_TEST_AAPT),)
+      $(error aapt is not available. Please install it first ("sudo apt-get install aapt") or define GAPPS_FORCE_MATCHING_DPI := true)
+    else
+      GAPPS_AAPT_PATH := aapt
+    endif
+  endif
+endif
 
 include $(GAPPS_BUILD_SYSTEM_PATH)/definitions.mk
 
 # Device should define their GAPPS_VARIANT in device/manufacturer/product/BoardConfig.mk
 ifneq ($(TARGET_PRODUCT),$(filter $(TARGET_PRODUCT),sdk))
 ifeq ($(GAPPS_VARIANT),)
-	$(error GAPPS_VARIANT must be configured)
+  $(error GAPPS_VARIANT must be configured)
 endif
 GAPPS_VARIANT_EVAL := $(call get-gapps-variant,$(GAPPS_VARIANT))
 
 ifeq ($(GAPPS_VARIANT_EVAL),)
-$(error GAPPS_VARIANT $(GAPPS_VARIANT) was not found. Use of one of pico,nano,micro,mini,full,stock,super)
+  $(error GAPPS_VARIANT $(GAPPS_VARIANT) was not found. Use of one of pico,nano,micro,mini,full,stock,super)
 endif
 
 TARGET_GAPPS_VARIANT := $(GAPPS_VARIANT_EVAL)

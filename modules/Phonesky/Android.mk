@@ -1,5 +1,6 @@
 LOCAL_PATH := .
 include $(CLEAR_VARS)
+include $(GAPPS_CLEAR_VARS)
 LOCAL_MODULE := Phonesky
 LOCAL_PACKAGE_NAME := com.android.vending
 LOCAL_PRIVILEGED_MODULE := true
