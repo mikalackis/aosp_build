@@ -26,6 +26,7 @@ PRODUCT_PACKAGES += FaceLock \
 
 ifneq ($(filter $(TARGET_GAPPS_VARIANT),micro),) # require at least micro
 PRODUCT_PACKAGES += CalendarGooglePrebuilt \
+                    PrebuiltExchange3Google \
                     PrebuiltGmail \
                     GoogleHome
                     
@@ -89,7 +90,8 @@ PRODUCT_PACKAGES += Wallet \
                     Tycho \
                     Street \
                     TranslatePrebuilt \
-                    GoogleZhuyinIME
+                    GoogleZhuyinIME \
+                    Earth
 
 endif # end super
 endif # end stock
