@@ -30,14 +30,13 @@ PRODUCT_PACKAGES += CalendarGooglePrebuilt \
                     PrebuiltExchange3Google \
                     PrebuiltGmail \
                     GoogleHome
-                    
+
 ifeq ($(filter $(call get-allowed-api-levels),23),)
 PRODUCT_PACKAGES += GoogleTTS
 endif
 
 ifneq ($(filter $(TARGET_GAPPS_VARIANT),mini),) # require at least mini
-PRODUCT_PACKAGES += CalculatorGoogle \
-                    PrebuiltDeskClockGoogle \
+PRODUCT_PACKAGES += PrebuiltDeskClockGoogle \
                     PlusOne \
                     Hangouts \
                     Maps \
@@ -45,9 +44,15 @@ PRODUCT_PACKAGES += CalculatorGoogle \
                     YouTube \
                     Chrome
 
+ifneq ($(filter $(call get-allowed-api-levels),23),)
+PRODUCT_PACKAGES += CalculatorGoogle
+endif
+
 ifneq ($(filter $(TARGET_GAPPS_VARIANT),full),) # require at least full
+
+GAPPS_FORCE_BROWSER_OVERRIDES := true
+
 PRODUCT_PACKAGES += Books \
-                    Chrome \
                     CloudPrint2 \
                     EditorsDocs \
                     Drive \
@@ -66,11 +71,14 @@ PRODUCT_PACKAGES += Books \
 ifneq ($(filter $(TARGET_GAPPS_VARIANT),stock),) # require at least stock
 
 GAPPS_FORCE_WEBVIEW_OVERRIDES := true
+ifneq ($(filter $(call get-allowed-api-levels),23),)
+GAPPS_FORCE_DIALER_OVERRIDES := true
+endif
+GAPPS_FORCE_MMS_OVERRIDES := true
 
 PRODUCT_PACKAGES += GoogleCamera \
                     GoogleContacts \
                     LatinImeGoogle \
-                    PrebuiltBugle \
                     TagGoogle
 
 ifneq ($(filter $(TARGET_GAPPS_VARIANT),super),)
@@ -102,4 +110,23 @@ endif # end nano
 ifeq ($(GAPPS_FORCE_WEBVIEW_OVERRIDES),true)
 DEVICE_PACKAGE_OVERLAYS += $(GAPPS_DEVICE_FILES_PATH)/overlay/webview
 PRODUCT_PACKAGES += WebViewGoogle
+endif
+
+ifeq ($(GAPPS_FORCE_BROWSER_OVERRIDES),true)
+ifneq ($(filter $(call get-allowed-api-levels),23),)
+DEVICE_PACKAGE_OVERLAYS += $(GAPPS_DEVICE_FILES_PATH)/overlay/browser
+endif
+PRODUCT_PACKAGES += Chrome
+endif
+
+ifneq ($(filter $(call get-allowed-api-levels),23),)
+ifeq ($(GAPPS_FORCE_DIALER_OVERRIDES),true)
+DEVICE_PACKAGE_OVERLAYS += $(GAPPS_DEVICE_FILES_PATH)/overlay/dialer
+PRODUCT_PACKAGES += GoogleDialer
+endif
+endif
+
+ifeq ($(GAPPS_FORCE_MMS_OVERRIDES),true)
+DEVICE_PACKAGE_OVERLAYS += $(GAPPS_DEVICE_FILES_PATH)/overlay/mms
+PRODUCT_PACKAGES += PrebuiltBugle
 endif
