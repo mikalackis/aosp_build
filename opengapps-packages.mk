@@ -54,7 +54,6 @@ PRODUCT_PACKAGES += Books \
                     CloudPrint2 \
                     EditorsDocs \
                     Drive \
-                    GoogleEars \
                     FitnessPrebuilt \
                     PrebuiltKeep \
                     Videos \
