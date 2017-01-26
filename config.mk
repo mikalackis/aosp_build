@@ -1,3 +1,5 @@
+ifneq ($(GAPPS_VARIANT),)
+
 # Opengapps AOSP build system
 GAPPS_BUILD_SYSTEM_PATH := vendor/google/build/core
 GAPPS_SOURCES_PATH := vendor/opengapps/sources
@@ -37,10 +39,6 @@ endif
 include $(GAPPS_BUILD_SYSTEM_PATH)/definitions.mk
 
 # Device should define their GAPPS_VARIANT in device/manufacturer/product/BoardConfig.mk
-ifneq ($(TARGET_PRODUCT),$(filter $(TARGET_PRODUCT),sdk))
-ifeq ($(GAPPS_VARIANT),)
-  $(error GAPPS_VARIANT must be configured)
-endif
 GAPPS_VARIANT_EVAL := $(call get-gapps-variant,$(GAPPS_VARIANT))
 
 ifeq ($(GAPPS_VARIANT_EVAL),)
@@ -48,5 +46,5 @@ ifeq ($(GAPPS_VARIANT_EVAL),)
 endif
 
 TARGET_GAPPS_VARIANT := $(GAPPS_VARIANT_EVAL)
-endif
 
+endif
