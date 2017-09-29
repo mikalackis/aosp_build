@@ -1,5 +1,6 @@
-include vendor/google/build/config.mk
-include $(GAPPS_FILES)
+include vendor/opengapps/build/core/definitions.mk
+include vendor/opengapps/build/config.mk
+include vendor/opengapps/build/opengapps-files.mk
 
 DEVICE_PACKAGE_OVERLAYS += \
     $(GAPPS_DEVICE_FILES_PATH)/overlay/pico
@@ -23,10 +24,18 @@ GAPPS_PRODUCT_PACKAGES += \
     GooglePackageInstaller
 endif
 
-ifneq ($(filter $(TARGET_GAPPS_VARIANT),nano),) # require at least nano
+ifneq ($(filter $(call get-allowed-api-levels),24),)
 GAPPS_PRODUCT_PACKAGES += \
-    FaceLock \
-    HotwordEnrollment \
+    PrebuiltGmsCoreInstantApps
+endif
+
+ifneq ($(filter $(TARGET_GAPPS_VARIANT),nano),) # require at least nano
+# support only arm based platforms
+ifneq ($(filter arm%, $(TARGET_ARCH)),)
+GAPPS_PRODUCT_PACKAGES += \
+    FaceLock
+endif
+GAPPS_PRODUCT_PACKAGES += \
     Velvet
 
 ifneq ($(filter $(TARGET_GAPPS_VARIANT),micro),) # require at least micro
