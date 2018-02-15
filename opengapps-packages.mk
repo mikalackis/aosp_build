@@ -6,6 +6,7 @@ DEVICE_PACKAGE_OVERLAYS += \
     $(GAPPS_DEVICE_FILES_PATH)/overlay/pico
 
 GAPPS_PRODUCT_PACKAGES += \
+    Feedback \
     GoogleBackupTransport \
     GoogleContactsSyncAdapter \
     GoogleFeedback \
@@ -18,44 +19,45 @@ GAPPS_PRODUCT_PACKAGES += \
     Phonesky \
     GoogleCalendarSyncAdapter
 
-ifneq ($(filter $(call get-allowed-api-levels),23),)
+ifneq ($(filter 23,$(call get-allowed-api-levels)),)
 GAPPS_PRODUCT_PACKAGES += \
     GoogleTTS \
     GooglePackageInstaller
 endif
 
-ifneq ($(filter $(call get-allowed-api-levels),24),)
+ifneq ($(filter 24,$(call get-allowed-api-levels)),)
 GAPPS_PRODUCT_PACKAGES += \
     PrebuiltGmsCoreInstantApps
 endif
 
-ifneq ($(filter $(call get-allowed-api-levels),25),)
+ifneq ($(filter 25,$(call get-allowed-api-levels)),)
 GAPPS_PRODUCT_PACKAGES += \
     Turbo
 endif
 
-ifneq ($(filter $(TARGET_GAPPS_VARIANT),nano),) # require at least nano
-# support only arm based platforms
-ifneq ($(filter arm%, $(TARGET_ARCH)),)
+ifneq ($(filter 26,$(call get-allowed-api-levels)),)
 GAPPS_PRODUCT_PACKAGES += \
-    FaceLock
+    AndroidPlatformServices
 endif
+
+ifneq ($(filter nano,$(TARGET_GAPPS_VARIANT)),) # require at least nano
 GAPPS_PRODUCT_PACKAGES += \
+    FaceLock \
     Velvet
 
-ifneq ($(filter $(TARGET_GAPPS_VARIANT),micro),) # require at least micro
+ifneq ($(filter micro,$(TARGET_GAPPS_VARIANT)),) # require at least micro
 GAPPS_PRODUCT_PACKAGES += \
     CalendarGooglePrebuilt \
     PrebuiltExchange3Google \
     PrebuiltGmail \
     GoogleHome
 
-ifeq ($(filter $(call get-allowed-api-levels),23),)
+ifeq ($(filter 23,$(call get-allowed-api-levels)),)
 GAPPS_PRODUCT_PACKAGES += \
     GoogleTTS
 endif
 
-ifneq ($(filter $(TARGET_GAPPS_VARIANT),mini),) # require at least mini
+ifneq ($(filter mini,$(TARGET_GAPPS_VARIANT)),) # require at least mini
 GAPPS_PRODUCT_PACKAGES += \
     CalculatorGoogle \
     PrebuiltDeskClockGoogle \
@@ -65,7 +67,7 @@ GAPPS_PRODUCT_PACKAGES += \
     Photos \
     YouTube
 
-ifneq ($(filter $(TARGET_GAPPS_VARIANT),full),) # require at least full
+ifneq ($(filter full,$(TARGET_GAPPS_VARIANT)),) # require at least full
 
 GAPPS_FORCE_BROWSER_OVERRIDES := true
 GAPPS_PRODUCT_PACKAGES += \
@@ -84,7 +86,7 @@ GAPPS_PRODUCT_PACKAGES += \
     EditorsSlides \
     talkback
 
-ifneq ($(filter $(TARGET_GAPPS_VARIANT),stock),) # require at least stock
+ifneq ($(filter stock,$(TARGET_GAPPS_VARIANT)),) # require at least stock
 
 GAPPS_FORCE_MMS_OVERRIDES := true
 GAPPS_FORCE_WEBVIEW_OVERRIDES := true
@@ -95,17 +97,17 @@ GAPPS_PRODUCT_PACKAGES += \
     TagGoogle \
     GoogleVrCore
 
-ifneq ($(filter $(call get-allowed-api-levels),23),)
+ifneq ($(filter 23,$(call get-allowed-api-levels)),)
 GAPPS_FORCE_DIALER_OVERRIDES := true
 endif
-ifneq ($(filter $(call get-allowed-api-levels),24),)
+ifneq ($(filter 24,$(call get-allowed-api-levels)),)
 GAPPS_PRODUCT_PACKAGES += \
     GooglePrintRecommendationService \
     GoogleExtServices \
     GoogleExtShared
 endif
 
-ifneq ($(filter $(TARGET_GAPPS_VARIANT),super),)
+ifneq ($(filter super,$(TARGET_GAPPS_VARIANT)),)
 
 GAPPS_PRODUCT_PACKAGES += \
     Wallet \
@@ -135,19 +137,20 @@ endif # end nano
 PRODUCT_PACKAGES += $(filter-out $(GAPPS_EXCLUDED_PACKAGES),$(GAPPS_PRODUCT_PACKAGES))
 
 ifeq ($(GAPPS_FORCE_WEBVIEW_OVERRIDES),true)
-ifneq ($(filter-out $(call get-allowed-api-levels),24),)
-DEVICE_PACKAGE_OVERLAYS += \
-    $(GAPPS_DEVICE_FILES_PATH)/overlay/webview/21
-else
+# starting with nougat, use a different overlay
+ifneq ($(filter 24,$(call get-allowed-api-levels)),)
 DEVICE_PACKAGE_OVERLAYS += \
     $(GAPPS_DEVICE_FILES_PATH)/overlay/webview/24
+else
+DEVICE_PACKAGE_OVERLAYS += \
+    $(GAPPS_DEVICE_FILES_PATH)/overlay/webview/21
 endif
 PRODUCT_PACKAGES += \
     WebViewGoogle
 endif
 
 ifeq ($(GAPPS_FORCE_BROWSER_OVERRIDES),true)
-ifneq ($(filter $(call get-allowed-api-levels),23),)
+ifneq ($(filter 23,$(call get-allowed-api-levels)),)
 DEVICE_PACKAGE_OVERLAYS += \
     $(GAPPS_DEVICE_FILES_PATH)/overlay/browser
 endif
@@ -155,7 +158,7 @@ PRODUCT_PACKAGES += \
     Chrome
 endif
 
-ifneq ($(filter $(call get-allowed-api-levels),23),)
+ifneq ($(filter 23,$(call get-allowed-api-levels)),)
 ifeq ($(GAPPS_FORCE_DIALER_OVERRIDES),true)
 DEVICE_PACKAGE_OVERLAYS += \
     $(GAPPS_DEVICE_FILES_PATH)/overlay/dialer
@@ -174,18 +177,16 @@ PRODUCT_PACKAGES += \
 endif
 
 ifeq ($(GAPPS_FORCE_PIXEL_LAUNCHER),true)
-GAPPS_EXCLUDED_PACKAGES += \
-    GoogleHome
 
-ifneq ($(filter $(call get-allowed-api-levels),25),)
-ifneq ($(filter-out $(call get-allowed-api-levels),26),)
-DEVICE_PACKAGE_OVERLAYS += \
-    $(GAPPS_DEVICE_FILES_PATH)/overlay/pixelicons/25
-else
+ifneq ($(filter 26,$(call get-allowed-api-levels)),)
 DEVICE_PACKAGE_OVERLAYS += \
     $(GAPPS_DEVICE_FILES_PATH)/overlay/pixelicons/26
+else ifneq ($(filter 25,$(call get-allowed-api-levels)),)
+DEVICE_PACKAGE_OVERLAYS += \
+    $(GAPPS_DEVICE_FILES_PATH)/overlay/pixelicons/25
 endif
 
+ifneq ($(filter 25,$(call get-allowed-api-levels)),)
 PRODUCT_PACKAGES += \
     PixelLauncherIcons
 endif
